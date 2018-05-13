@@ -1,0 +1,306 @@
+Sub test()
+
+    'MsgBox Range("a2").Row
+    'Cells(2, 1).Value = 1
+
+
+'    Dim wb As Workbook
+'    Set wb = Workbooks.Open(ThisWorkbook.Path & "\sou.xlsm")
+'    MsgBox wb.Sheets("3) ggggggg").Range("C6").Value
+'
+'    Dim des As Workbook
+'    Set des = Workbooks.Open(ThisWorkbook.Path & "\des.xlsx")
+'
+'    des.Sheets(1).Range("b2").Value = "'" & Left(wb.Sheets("3) ggggggg").Range("C6").Value, 6)
+'
+'    If Dir(ThisWorkbook.Path & "\ok", vbDirectory) = "" Then
+'       MkDir ThisWorkbook.Path & "\ok"
+'    End If
+'
+'    Application.DisplayAlerts = False
+'
+'    des.SaveAs (ThisWorkbook.Path & "\ok\ok.xlsx")
+'
+'    Application.DisplayAlerts = True
+'
+'    wb.Close
+'    des.Close
+'
+'    MsgBox "a"
+
+    Dim tar As Workbook
+    Dim des As Workbook
+    Dim tarsh As Worksheet
+    Dim dessh As Worksheet
+    
+    Set tar = Workbooks.Open(ThisWorkbook.Path & "\sou.xlsm")
+    Set des = Workbooks.Open(ThisWorkbook.Path & "\des.xlsx")
+    Set tarsh = tar.Sheets("3) ggggggg")
+    Set dessh = des.Sheets(1)
+    
+'    MsgBox tarsh.Range("C56").Value
+'    MsgBox dessh.Range("B12").Value
+    
+'    MsgBox tarsh.Range("C:C").Find("com3 bb").Address
+    
+'    MsgBox tarsh.Range("C:C").Find("com3 bb").Row
+    
+'    Dim i As Integer
+'
+'    For i = tarsh.Range("C:C").Find("com3 bb").Row To (tarsh.Cells(i, "C") <> "com3 bb")
+'        MsgBox tarsh.Cells(i, "D").Value
+'    Next i
+    
+'    Dim i As Integer
+'    i = tarsh.Range("C:C").Find("com3 bb").Row
+'
+''    MsgBox i
+''    MsgBox tarsh.Cells(i, "C").Value
+'    While tarsh.Cells(i, "C").Value = "com3 bb"
+''        MsgBox tarsh.Cells(i, "D").Value
+'        Select Case UCase(tarsh.Cells(i, "D").Value)
+'            Case "ADD"
+'                MsgBox "add"
+'                Call ad(tarsh, i, dessh)
+'            Case "AMEND"
+'                MsgBox "amend"
+'            Case "DEL"
+'                MsgBox "del"
+'                'MsgBox getlb(dessh, "B")
+'                Call d(tarsh, i, dessh)
+'            Case ""
+'                'do nothing
+'            Case Else
+'                MsgBox "error" & tarsh.Cells(i, "D").Address
+'        End Select
+'
+'        i = i + 1
+'    Wend
+'
+'    i = tarsh.Range("C:C").Find("com12 kk").Row
+'    While tarsh.Cells(i, "C").Value = "com12 kk"
+''        MsgBox tarsh.Cells(i, "D").Value
+'        Select Case UCase(tarsh.Cells(i, "D").Value)
+'            Case "ADD"
+'                MsgBox "add"
+'                Call ad(tarsh, i, dessh)
+'            Case "AMEND"
+'                MsgBox "amend"
+'            Case "DEL"
+'                MsgBox "del"
+'                'MsgBox getlb(dessh, "B")
+'                Call d(tarsh, i, dessh)
+'            Case ""
+'                'do nothing
+'            Case Else
+'                MsgBox "error" & tarsh.Cells(i, "D").Address
+'        End Select
+'
+'        i = i + 1
+'    Wend
+        
+    Call ip(tarsh, "com3 bb", dessh)
+    Call ip(tarsh, "com12 kk", dessh)
+
+    Call st(dessh)
+
+    'tar.Close
+    'des.Close
+
+  
+End Sub
+Sub ip(tw As Worksheet, s As String, dw As Worksheet)
+    Dim i As Integer
+    i = tw.Range("C:C").Find(s).Row
+    While tw.Cells(i, "C").Value = s
+        Select Case UCase(tw.Cells(i, "D").Value)
+            Case "ADD"
+                'MsgBox "add"
+                Call ad(tw, i, dw)
+            Case "AMEND"
+                'MsgBox "amend"
+                Call am(tw, i, dw)
+            Case "DEL"
+                'MsgBox "del"
+                Call d(tw, i, dw)
+            Case ""
+                'do nothing
+            Case Else
+                MsgBox "error" & tw.Cells(i, "D").Address
+        End Select
+        i = i + 1
+    Wend
+End Sub
+Sub st(ws As Worksheet)
+    Dim ls As Integer
+    ls = getlb(ws, "B")
+    With ws
+        .Range("B12:J" & ls).Sort _
+        Key1:=.Range("B12"), order1:=xlDescending, _
+        Key2:=.Range("C12"), order2:=xlDescending, Header:=xlYes
+    End With
+End Sub
+'ok, work
+Sub d(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "deletion"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - id"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - id"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value) 'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+Sub ad(tw As Worksheet, i As Integer, dw As Worksheet)
+    Call adi(tw, i, dw)
+    Call adn(tw, i, dw)
+    Call addob(tw, i, dw)
+    Call adfn(tw, i, dw)
+    Call adbp(tw, i, dw, "addition")
+    Call adpa(tw, i, dw)
+End Sub
+Sub am(tw As Worksheet, i As Integer, dw As Worksheet)
+    Call adbp(tw, i, dw, "alteration")
+End Sub
+'ok, work
+Sub adi(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - id"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - id"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "E").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)  'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Sub adn(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - na"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - na"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "K").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)   'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Sub addob(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - dob"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - dob"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "I").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)   'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Sub adfn(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - fn"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - fn"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "H").Value) & " " & UCase(tw.Cells(i, "F").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)  'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Sub adbp(tw As Worksheet, i As Integer, dw As Worksheet, s As String)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "B").Value = s
+        dw.Cells(lb, "C").Value = "b - p"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        Exit Sub
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "L").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)  'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'not fully test, not ok
+Sub adpa(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim rng As Range
+    Dim add As String
+    Set rng = dw.Range("C:C").Find("pa")
+    If Not rng Is Nothing Then
+        add = rng.Address
+    Else
+        add = ""
+    End If
+    Do While Not rng Is Nothing
+        If UCase(dw.Cells(rng.Row, "F").Value) = UCase(tw.Cells(i, "F").Value) Then
+            Exit Sub
+        Else
+            Set rng = dw.Range("C:C").FindNext(rng)
+            If rng.Address = add Then
+                Exit Do
+            End If
+        End If
+    Loop
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    dw.Cells(lb, "C").Value = "pa"
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "J").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)  'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Function getlb(w As Worksheet, r As String) As Integer
+    getlb = w.Cells(w.Rows.Count, r).End(3).Row + 1
+End Function
+Sub t()
+    'MsgBox ThisWorkbook.Sheets(1).Rows.Count
+    MsgBox ThisWorkbook.Sheets(1).Range("A" & Rows.Count).End(3).Row
+End Sub
+
