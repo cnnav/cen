@@ -1,0 +1,41 @@
+Sub abc()
+    Dim sFile As String
+    Dim sName
+'    Dim s As Variant
+'    Dim s2 As Variant
+    With Application.FileDialog(msoFileDialogFilePicker)
+        .AllowMultiSelect = False
+        .Filters.Clear
+        .Filters.add "Excel Files", "*.xls*"
+        .InitialFileName = ThisWorkbook.Path & "\"
+        If .Show = -1 Then sFile = .SelectedItems(1)
+    End With
+    
+    sName = Split(sFile, "\")(UBound(Split(sFile, "\")))
+    sFile = Left(sFile, Len(sFile) - Len(sName))
+    MsgBox "FilePath:" & sFile & vbCrLf & "FileName:" & Split(sName, ".xls")(0)
+    
+'    s = Split(sFile, "\")
+'    s2 = Split(s(UBound(s)), ".")
+'    MsgBox s2(0)
+
+'    Dim re
+'    Set re = CreateObject("vbscript.regexp")
+'    re.Global = True
+'    re.Pattern = "[\s\S]+(?=\.xls*$)"
+'    MsgBox re.Execute(sFile)(0)
+    
+End Sub
+
+'Sub txt_file_name()
+'Dim re
+'Set re = CreateObject("vbscript.regexp")
+'re.Global = True
+'re.Pattern = "[\s\S]+(?=\.txt$)"
+'MsgBox re.Execute("mytxt.txt.txt")(0)
+'End Sub
+
+
+Sub time()
+    ThisWorkbook.Sheets(1).Range("D12") = Format(ThisWorkbook.Sheets(1).Range("B12"), "ddmmyyyy")
+End Sub
