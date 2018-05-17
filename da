@@ -39,3 +39,40 @@ End Sub
 Sub time()
     ThisWorkbook.Sheets(1).Range("D12") = Format(ThisWorkbook.Sheets(1).Range("B12"), "ddmmyyyy")
 End Sub
+
+Sub t()
+    Dim s, s1, s2, s3, s4, sf As String
+    Dim a As Variant
+    Dim i As Integer
+    s = "Hysan Place, 500 Hennessy Road, Causeway Bay, Hong Kong, 39793100"
+    a = Split(s, ",")
+    'MsgBox Len(s) & vbCrLf & a(0) & vbCrLf & Len(a(0))
+    'MsgBox Mid(s, 1, 35)
+    'MsgBox Mid(s, 1, InStrRev(Mid(s, 1, 35), ",") - 1)
+    'MsgBox InStrRev(s, ";")
+    For i = 0 To UBound(a)
+        If Len(s1) < 35 And Len(s1) + Len(a(i)) < 35 Then
+            s1 = s1 & a(i) & ","
+        ElseIf Len(s2) < 35 And Len(s2) + Len(a(i)) < 35 Then
+            s2 = s2 & a(i) & ","
+        ElseIf Len(s3) < 35 And Len(s3) + Len(a(i)) < 35 Then
+            s3 = s3 & a(i) & ","
+        Else
+            s4 = s4 & a(i)
+        End If
+    Next
+    If Len(s1) <> 0 Then
+        sf = sf & Left(s1, Len(s1) - 1) & "||"
+    End If
+    If Len(s2) <> 0 Then
+        sf = sf & Left(s2, Len(s2) - 1) & "||"
+    End If
+    If Len(s3) <> 0 Then
+        sf = sf & Left(s3, Len(s3) - 1) & "||"
+    End If
+    If Len(s4) <> 0 Then
+        sf = sf & Left(s4, Len(s4) - 1) & "||"
+    End If
+    'MsgBox Len(s1)
+    MsgBox sf
+End Sub
