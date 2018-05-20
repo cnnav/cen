@@ -33,10 +33,34 @@ Sub test()
     Dim tarsh As Worksheet
     Dim dessh As Worksheet
     
-    Set tar = Workbooks.Open(ThisWorkbook.Path & "\sou.xlsm")
-    Set des = Workbooks.Open(ThisWorkbook.Path & "\des.xlsx")
-    Set tarsh = tar.Sheets("3) ggggggg")
-    Set dessh = des.Sheets(1)
+'''''    Set tar = Workbooks.Open(ThisWorkbook.Path & "\sou.xlsm")
+'''''    Set des = Workbooks.Open(ThisWorkbook.Path & "\des.xlsx")
+    
+    Dim cd As String
+    Dim ac As String
+
+'    Dim s As String
+'    s = "sasdfgsdfg,vsdfgdfg"
+'    MsgBox UBound(Split(s, " "))
+    For i = 16 To 23
+'        cd = fc(ThisWorkbook.Sheets(1).Cells(i, "A").Value)
+'        ac = fa(ThisWorkbook.Sheets(1).Cells(i, "A").Value)
+        If fc(ThisWorkbook.Sheets(1).Cells(i, "A").Value) = "" Then
+            MsgBox "Not found country"
+        End If
+        MsgBox ad4(ThisWorkbook.Sheets(1).Cells(i, "A").Value) & fc(ThisWorkbook.Sheets(1).Cells(i, "A").Value) & "||" & fa(ThisWorkbook.Sheets(1).Cells(i, "A").Value)
+        'MsgBox sp2(ThisWorkbook.Sheets(1).Cells(i, "A").Value)(0) & "||" & sp2(ThisWorkbook.Sheets(1).Cells(i, "A").Value)(1)
+'        MsgBox cd & ac
+
+    Next
+
+    
+    
+    
+'''''    Call getsh(tar, tarsh)
+    
+    'Set tarsh = tar.Sheets("3) ggggggg")
+'''''    Set dessh = des.Sheets(1)
     
 '    MsgBox tarsh.Range("C56").Value
 '    MsgBox dessh.Range("B12").Value
@@ -99,16 +123,179 @@ Sub test()
 '        i = i + 1
 '    Wend
         
-    Call ip(tarsh, "com3 bb", dessh)
-    Call ip(tarsh, "com12 kk", dessh)
-
-    Call st(dessh)
+''''''    Call ip(tarsh, "com3 bb", dessh)
+''''''    Call ip(tarsh, "com12 kk", dessh)
+''''''
+''''''    Call st(dessh)
 
     'tar.Close
     'des.Close
 
   
 End Sub
+'new
+Sub getsh(ByVal ta As Workbook, ByRef tsh As Worksheet)
+    Dim i As Integer
+'    MsgBox tarsh Is Nothing
+    For i = 1 To ta.Sheets.Count
+        If rs(ta.Sheets(i).Name) Like "*OTHOBUP" Then
+            Set tsh = ta.Sheets(i)
+        End If
+'        Debug.Print Replace(UCase(tar.Sheets(i).Name), " ", "") & vbCrLf
+'        Debug.Print i & tar.Sheets.Count & vbCrLf
+    Next
+    If tsh Is Nothing Then
+        MsgBox "No sheet named with ""OTHOBUP"", please check"
+        ta.Close
+        End
+    End If
+End Sub
+'new
+Function rs(s As String) As String
+    rs = Replace(Trim(UCase(s)), " ", "")
+End Function
+'new
+Function fc(s As String) As String
+    Dim fs As String
+    Dim cc As String
+    fs = Right(rs(s), 18)
+    co = ""
+    For i = 2 To getlb(ThisWorkbook.Sheets(2), "A") - 1
+        If InStrRev(fs, ThisWorkbook.Sheets(2).Cells(i, "B").Value) Then
+            cc = ThisWorkbook.Sheets(2).Cells(i, "A").Text
+            'MsgBox TypeName(ThisWorkbook.Sheets(2).Cells(i, "A").Value)
+            fc = cc
+            Exit For
+        End If
+    Next
+    If cc = "" Then
+        If InStrRev(Right(fs, 2), "HK") Then
+            cc = "HK"
+            fc = cc
+        ElseIf InStrRev(Right(fs, 3), "USA") Then
+            cc = "US"
+            fc = cc
+        ElseIf InStrRev(fs, "UNITEDKINGDOM") Then
+            cc = "GB"
+            fc = cc
+        ElseIf InStrRev(fs, "UNITEDSTATE") Then
+            cc = "US"
+            fc = cc
+        ElseIf InStrRev(fs, "ITISHVIRGINISLAND") Then
+            cc = "VG"
+            fc = cc
+        ElseIf InStrRev(Right(fs, 3), "BVI") Then
+            cc = "VG"
+            fc = cc
+        Else
+            fc = ""
+        End If
+    End If
+End Function
+'new
+Function fa(s As String) As String
+    Dim fs As String
+    Dim ac As String
+    fs = Right(rs(s), 60)
+    ac = ""
+    If fc(fs) = "HK" Then
+        For i = 2 To getlb(ThisWorkbook.Sheets(3), "A") - 1
+            If InStrRev(fs, ThisWorkbook.Sheets(3).Cells(i, "B")) Then
+                ac = ThisWorkbook.Sheets(3).Cells(i, "A").Value
+                fa = ac
+                Exit For
+            End If
+        Next
+        If ac = "" Then
+            ac = "09"
+            fa = ac
+        End If
+    Else
+        fa = ""
+    End If
+End Function
+'new
+Function sp2(ByVal os As String) As Variant
+    Dim ar(1)
+    Dim no As Integer
+    no = UBound(Split(os, ","))
+    If no <> 0 Then
+        For i = 0 To no
+            If i < Round((no + 1) / 2) Then
+                ar(0) = ar(0) & Split(os, ",")(i) & ","
+            Else
+                ar(1) = ar(1) & Split(os, ",")(i) & ","
+            End If
+        Next
+    Else
+        no = UBound(Split(os, " "))
+        For i = 0 To no
+            If i < Round((no + 1) / 2) Then
+                ar(0) = ar(0) & Split(os, " ")(i) & " "
+            Else
+                ar(1) = ar(1) & Split(os, " ")(i) & " "
+            End If
+        Next
+    End If
+    sp2 = ar
+End Function
+'new
+Function ad4(s As String) As String
+    Dim s1, s2, s3, s4 As String
+    Dim no As Integer
+    no = UBound(Split(s, ","))
+    'MsgBox no
+    If no <> 0 Then
+        If no > 3 Then
+            s1 = sp2(Left(sp2(s)(0), Len(sp2(s)(0)) - 1))(0)
+            s2 = sp2(Left(sp2(s)(0), Len(sp2(s)(0)) - 1))(1)
+            s3 = sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(0)
+            s4 = Left(sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(1), Len(sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(1)) - 1)
+        Else
+            If no = 1 Then
+                s1 = Split(s, ",")(0) & ","
+                s2 = Split(s, ",")(1)
+                s3 = s4 = ""
+            ElseIf no = 2 Then
+                s1 = Split(s, ",")(0) & ","
+                s2 = Split(s, ",")(1) & ","
+                s3 = Split(s, ",")(2)
+                s4 = ""
+            ElseIf no = 2 Then
+                s1 = Split(s, ",")(0) & ","
+                s2 = Split(s, ",")(1) & ","
+                s3 = Split(s, ",")(2) & ","
+                s4 = Split(s, ",")(3)
+            End If
+        End If
+    Else
+        no = UBound(Split(s, " "))
+        If no > 3 Then
+            s1 = sp2(Left(sp2(s)(0), Len(sp2(s)(0)) - 1))(0)
+            s2 = sp2(Left(sp2(s)(0), Len(sp2(s)(0)) - 1))(1)
+            s3 = sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(0)
+            s4 = Left(sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(1), Len(sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(1)) - 1)
+        Else
+            If no = 1 Then
+                s1 = Split(s, " ")(0) & " "
+                s2 = Split(s, " ")(1)
+                s3 = s4 = ""
+            ElseIf no = 2 Then
+                s1 = Split(s, " ")(0) & " "
+                s2 = Split(s, " ")(1) & " "
+                s3 = Split(s, " ")(2)
+                s4 = ""
+            ElseIf no = 2 Then
+                s1 = Split(s, " ")(0) & " "
+                s2 = Split(s, " ")(1) & " "
+                s3 = Split(s, " ")(2) & " "
+                s4 = Split(s, " ")(3)
+            End If
+        End If
+    End If
+    ad4 = s1 & "||" & s2 & "||" & s3 & "||" & s4 & "||"
+End Function
+
 Sub ip(tw As Worksheet, s As String, dw As Worksheet)
     Dim i As Integer
     i = tw.Range("C:C").Find(s).Row
@@ -301,5 +488,17 @@ Function getlb(w As Worksheet, r As String) As Integer
 End Function
 Sub t()
     'MsgBox ThisWorkbook.Sheets(1).Rows.Count
-    MsgBox ThisWorkbook.Sheets(1).Range("A" & Rows.Count).End(3).Row
+    'MsgBox ThisWorkbook.Sheets(1).Range("A" & Rows.Count).End(3).Row
+'    Dim s As String
+'    s = "sasdfgsdfg,vsdfgdfg"
+'    MsgBox UBound(Split(s, " "))
+    'MsgBox sp2("G1-2, Sunlight Tower, 248 Queen's Road East, Wan Chai, Hong Kong")(0) & "||" & sp2("G1-2, Sunlight Tower, 248 Queen's Road East, Wan Chai, Hong Kong")(1)
+    'ThisWorkbook.Sheets(1).Cells(16, 1).Interior.Color = vbYellow
+'    ThisWorkbook.Sheets(1).Cells(16, 1).ClearComments
+'    ThisWorkbook.Sheets(1).Cells(16, 1).AddComment (ThisWorkbook.Sheets(1).Cells(16, 1).Value)
+    If ThisWorkbook.Sheets(1).Cells(16, 1).Comment Is Nothing Then
+        ThisWorkbook.Sheets(1).Cells(16, 1).AddComment (ThisWorkbook.Sheets(1).Cells(16, 1).Value)
+    Else
+        ThisWorkbook.Sheets(1).Cells(16, 1).Comment.Text (ThisWorkbook.Sheets(1).Cells(16, 1).Comment.Text & vbCrLf & ThisWorkbook.Sheets(1).Cells(16, 1).Value)
+    End If
 End Sub
