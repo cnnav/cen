@@ -1,0 +1,777 @@
+Sub test()
+
+    'MsgBox Range("a2").Row
+    'Cells(2, 1).Value = 1
+
+
+'    Dim wb As Workbook
+'    Set wb = Workbooks.Open(ThisWorkbook.Path & "\sou.xlsm")
+'    MsgBox wb.Sheets("3) ggggggg").Range("C6").Value
+'
+'    Dim des As Workbook
+'    Set des = Workbooks.Open(ThisWorkbook.Path & "\des.xlsx")
+'
+'    des.Sheets(1).Range("b2").Value = "'" & Left(wb.Sheets("3) ggggggg").Range("C6").Value, 6)
+'
+'    If Dir(ThisWorkbook.Path & "\ok", vbDirectory) = "" Then
+'       MkDir ThisWorkbook.Path & "\ok"
+'    End If
+'
+'    Application.DisplayAlerts = False
+'
+'    des.SaveAs (ThisWorkbook.Path & "\ok\ok.xlsx")
+'
+'    Application.DisplayAlerts = True
+'
+'    wb.Close
+'    des.Close
+'
+'    MsgBox "a"
+
+    Dim tar As Workbook
+    Dim des As Workbook
+    Dim tarsh As Worksheet
+    Dim dessh As Worksheet
+    
+'''''    Set tar = Workbooks.Open(ThisWorkbook.Path & "\sou.xlsm")
+'''''    Set des = Workbooks.Open(ThisWorkbook.Path & "\des.xlsx")
+    
+    Dim cd As String
+    Dim ac As String
+
+'    Dim s As String
+'    s = "sasdfgsdfg,vsdfgdfg"
+'    MsgBox UBound(Split(s, " "))
+    For i = 16 To 23
+'        cd = fc(ThisWorkbook.Sheets(1).Cells(i, "A").Value)
+'        ac = fa(ThisWorkbook.Sheets(1).Cells(i, "A").Value)
+        If fc(ThisWorkbook.Sheets(1).Cells(i, "A").Value) = "" Then
+            MsgBox "Not found country"
+        End If
+        MsgBox ad4(ThisWorkbook.Sheets(1).Cells(i, "A").Value) & fc(ThisWorkbook.Sheets(1).Cells(i, "A").Value) & "||" & fa(ThisWorkbook.Sheets(1).Cells(i, "A").Value)
+        'MsgBox sp2(ThisWorkbook.Sheets(1).Cells(i, "A").Value)(0) & "||" & sp2(ThisWorkbook.Sheets(1).Cells(i, "A").Value)(1)
+'        MsgBox cd & ac
+
+    Next
+
+    
+    
+    
+'''''    Call getsh(tar, tarsh)
+    
+    'Set tarsh = tar.Sheets("3) ggggggg")
+'''''    Set dessh = des.Sheets(1)
+    
+'    MsgBox tarsh.Range("C56").Value
+'    MsgBox dessh.Range("B12").Value
+    
+'    MsgBox tarsh.Range("C:C").Find("com3 bb").Address
+    
+'    MsgBox tarsh.Range("C:C").Find("com3 bb").Row
+    
+'    Dim i As Integer
+'
+'    For i = tarsh.Range("C:C").Find("com3 bb").Row To (tarsh.Cells(i, "C") <> "com3 bb")
+'        MsgBox tarsh.Cells(i, "D").Value
+'    Next i
+    
+'    Dim i As Integer
+'    i = tarsh.Range("C:C").Find("com3 bb").Row
+'
+''    MsgBox i
+''    MsgBox tarsh.Cells(i, "C").Value
+'    While tarsh.Cells(i, "C").Value = "com3 bb"
+''        MsgBox tarsh.Cells(i, "D").Value
+'        Select Case UCase(tarsh.Cells(i, "D").Value)
+'            Case "ADD"
+'                MsgBox "add"
+'                Call ad(tarsh, i, dessh)
+'            Case "AMEND"
+'                MsgBox "amend"
+'            Case "DEL"
+'                MsgBox "del"
+'                'MsgBox getlb(dessh, "B")
+'                Call d(tarsh, i, dessh)
+'            Case ""
+'                'do nothing
+'            Case Else
+'                MsgBox "error" & tarsh.Cells(i, "D").Address
+'        End Select
+'
+'        i = i + 1
+'    Wend
+'
+'    i = tarsh.Range("C:C").Find("com12 kk").Row
+'    While tarsh.Cells(i, "C").Value = "com12 kk"
+''        MsgBox tarsh.Cells(i, "D").Value
+'        Select Case UCase(tarsh.Cells(i, "D").Value)
+'            Case "ADD"
+'                MsgBox "add"
+'                Call ad(tarsh, i, dessh)
+'            Case "AMEND"
+'                MsgBox "amend"
+'            Case "DEL"
+'                MsgBox "del"
+'                'MsgBox getlb(dessh, "B")
+'                Call d(tarsh, i, dessh)
+'            Case ""
+'                'do nothing
+'            Case Else
+'                MsgBox "error" & tarsh.Cells(i, "D").Address
+'        End Select
+'
+'        i = i + 1
+'    Wend
+        
+''''''    Call ip(tarsh, "com3 bb", dessh)
+''''''    Call ip(tarsh, "com12 kk", dessh)
+''''''
+''''''    Call st(dessh)
+
+    'tar.Close
+    'des.Close
+
+  
+End Sub
+
+Sub ftest()
+    Dim tar As Workbook
+    Dim des As Workbook
+    Dim tarsh As Worksheet
+    Dim dessh As Worksheet
+    
+    Dim sFile As String
+    Dim sName, sPath
+    
+    With Application.FileDialog(msoFileDialogFolderPicker)
+        .AllowMultiSelect = False
+        .InitialFileName = ThisWorkbook.Path & "\"
+        If .Show = -1 Then
+            sPath = .SelectedItems(1)
+            'MsgBox sPath
+        End If
+    End With
+    
+    If sPath = "" Then
+        MsgBox "No Folder select"
+        End
+    Else
+        sFile = Dir(sPath & "\*.xls*")
+        
+        Dim i, t As Integer
+        i = 0
+        Dim fileNameArr()
+        Do While sFile <> ""
+            ReDim Preserve fileNameArr(i)
+            fileNameArr(i) = sFile
+            i = i + 1
+            sFile = Dir
+        Loop
+        
+        If i <> 0 Then
+            For t = i - 1 To 0 Step -1
+                sName = Split(fileNameArr(t), ".xls")(0)
+                MsgBox sPath & "\" & fileNameArr(t)
+                If sName <> "工作簿1" And sName <> "des" Then
+                    Set tar = Workbooks.Open(sPath & "\" & fileNameArr(t))
+                    If getsh(tar) <> "" Then
+                        Set tarsh = tar.Sheets(getsh(tar))
+                        Set des = Workbooks.Open(ThisWorkbook.Path & "\des.xlsx")
+                        Set dessh = des.Sheets(1)
+                        
+                        Call ip(tarsh, "com3 bb", dessh)
+                        Call ip(tarsh, "com12 kk", dessh)
+                        
+                        Call st(dessh)
+                        
+                        Call cdir("ok")
+                                        
+                        Application.DisplayAlerts = False
+                    
+                        des.SaveAs (ThisWorkbook.Path & "\ok\" & sName)
+                    
+                        Application.DisplayAlerts = True
+                        
+                        tar.Close
+                        des.Close
+    
+                        
+                    End If
+                    
+                End If
+                
+                'sFile = Dir
+            Next
+        End If
+    End If
+    
+End Sub
+
+Sub cdir(s As String)
+    If Dir(ThisWorkbook.Path & "\" & s, vbDirectory) = "" Then
+        MkDir ThisWorkbook.Path & "\" & s
+    End If
+End Sub
+
+Sub ctest()
+    Dim tar As Workbook
+    Dim tarsh As Worksheet
+    Dim sFile As String
+    Dim sName
+    
+    With Application.FileDialog(msoFileDialogFilePicker)
+        .AllowMultiSelect = False
+        .Filters.Clear
+        .Filters.add "Excel Files", "*.xls*"
+        .InitialFileName = ThisWorkbook.Path & "\"
+        If .Show = -1 Then
+            sFile = .SelectedItems(1)
+        End If
+    End With
+    
+    If sFile = "" Then
+        MsgBox "No file select"
+        End
+    Else
+        'MsgBox sFile
+        Set tar = Workbooks.Open(sFile)
+        sName = Split(sFile, "\")(UBound(Split(sFile, "\")))
+        sFile = Left(sFile, Len(sFile) - Len(sName))
+        'MsgBox "FilePath:" & sFile & vbCrLf & "FileName:" & Split(sName, ".xls")(0)
+        If getsh(tar) = "" Then
+            End
+        Else
+            Set tarsh = tar.Sheets(getsh(tar))
+        End If
+        
+        'chc (tarsh.Cells(10, 2))
+        
+        Call cip(tarsh, "com3 bb")
+        Call cip(tarsh, "com12 kk")
+        
+        Call cadd(tarsh, "biz add")
+        Call cadd(tarsh, "reg add")
+        
+    End If
+
+End Sub
+Sub cadd(tw As Worksheet, s As String)
+    Dim cty, ar, ad As String
+    cty = fc(tw.Cells(Range("C:C").Find(s).Row, "D").Value)
+    ar = fa(tw.Cells(Range("C:C").Find(s).Row, "D").Value)
+    ad = ad4(tw.Cells(Range("C:C").Find(s).Row, "D").Value)
+    If tw.Cells(Range("C:C").Find(s).Row, "D").Value <> "" Then
+        If cty = "" Then
+            tw.Cells(Range("C:C").Find(s).Row, "D").Interior.Color = vbYellow
+        Else
+            Call ac(tw.Cells(Range("C:C").Find(s).Row, "D"), tw.Cells(Range("C:C").Find(s).Row, "D").Value)
+            tw.Cells(Range("C:C").Find(s).Row, "D").Value = ad & cty & "||" & ar
+        End If
+    End If
+End Sub
+
+Sub chc(ra As Range)
+    If ra.Value <> "" Then
+        If Len(rs(ra.Value)) = 2 Then
+            If ThisWorkbook.Sheets(2).Range("A:A").Find(rs(ra.Value)) Is Nothing Then
+                ra.Interior.Color = vbYellow
+            End If
+        Else
+            If ThisWorkbook.Sheets(2).Range("B:B").Find(rs(ra.Value)) Is Nothing Then
+                ra.Interior.Color = vbYellow
+            Else
+                Call ac(ra, ra.Value)
+                ra.Value = ThisWorkbook.Sheets(2).Cells(ThisWorkbook.Sheets(2).Range("B:B").Find(rs(ra.Value)).Row, "A")
+            End If
+        End If
+    End If
+End Sub
+Sub cadinf(tw As Worksheet, i As Integer)
+    If rs(tw.Cells(i, "E").Value) <> "" Then
+        If Left(rs(tw.Cells(i, "E").Value), 1) <> "I" And Left(rs(tw.Cells(i, "E").Value), 1) <> "P" And Left(rs(tw.Cells(i, "E").Value), 1) <> "X" Then
+            tw.Cells(i, "E").Interior.Color = vbYellow
+        End If
+    End If
+    If rs(tw.Cells(i, "F").Value) = "" Then
+        tw.Cells(i, "F").Interior.Color = vbYellow
+    End If
+    
+    Call cs(tw, i)
+    
+    If rs(tw.Cells(i, "I").Value) = "" Then
+        tw.Cells(i, "I").Interior.Color = vbYellow
+    ElseIf Not IsDate(tw.Cells(i, "I").Value) Then
+        tw.Cells(i, "I").Interior.Color = vbYellow
+    End If
+    
+    Call chc(tw.Cells(i, "J"))
+    
+    If rs(tw.Cells(i, "I").Value) = "" Then
+        tw.Cells(i, "I").Interior.Color = vbYellow
+    Else
+        Call chc(tw.Cells(i, "K"))
+    End If
+    
+End Sub
+
+Sub cdinf(tw As Worksheet, i As Integer)
+    If rs(tw.Cells(i, "E").Value) <> "" Then
+        If Left(rs(tw.Cells(i, "E").Value), 1) <> "I" And Left(rs(tw.Cells(i, "E").Value), 1) <> "P" And Left(rs(tw.Cells(i, "E").Value), 1) <> "X" Then
+            tw.Cells(i, "E").Interior.Color = vbYellow
+        End If
+    End If
+    If rs(tw.Cells(i, "F").Value) = "" Then
+        tw.Cells(i, "F").Interior.Color = vbYellow
+    End If
+    
+    Call cs(tw, i)
+    
+    If rs(tw.Cells(i, "I").Value) = "" Then
+        tw.Cells(i, "I").Interior.Color = vbYellow
+    ElseIf Not IsDate(tw.Cells(i, "I").Value) Then
+        tw.Cells(i, "I").Interior.Color = vbYellow
+    End If
+    
+    Call chc(tw.Cells(i, "J"))
+    Call chc(tw.Cells(i, "K"))
+    
+End Sub
+
+Sub cip(tw As Worksheet, s As String)
+    Dim i As Integer
+    i = tw.Range("C:C").Find(s).Row
+    While tw.Cells(i, "C").Value = s
+        Select Case rs(tw.Cells(i, "D").Value)
+            Case "ADD"
+                'MsgBox "add"
+                Call cadinf(tw, i)
+            Case "AMEND"
+                'MsgBox "amend"
+                Call cadinf(tw, i)
+            Case "DEL"
+                'MsgBox "del"
+                Call cdinf(tw, i)
+            Case ""
+                'do nothing
+            Case Else
+                MsgBox "error" & tw.Cells(i, "D").Address
+        End Select
+        i = i + 1
+    Wend
+End Sub
+Sub cs(tw As Worksheet, i As Integer)
+    If rs(tw.Cells(i, "G").Value) <> "" Or rs(tw.Cells(i, "H").Value) <> "" Then
+        If rs(tw.Cells(i, "G").Value) = "MR" Then
+            If rs(tw.Cells(i, "H").Value) <> "M" Then
+                If rs(tw.Cells(i, "H").Value) = "" Then
+                    Call ac(tw.Cells(i, "H"), "Blank")
+                    tw.Cells(i, "H").Value = "M"
+                Else
+                    tw.Cells(i, "G").Interior.Color = vbYellow
+                    tw.Cells(i, "H").Interior.Color = vbYellow
+                End If
+            End If
+        ElseIf rs(tw.Cells(i, "G").Value) = "" Then
+                If rs(tw.Cells(i, "H").Value) = "M" Then
+                    Call ac(tw.Cells(i, "G"), "Blank")
+                    tw.Cells(i, "G").Value = "MR"
+                ElseIf rs(tw.Cells(i, "H").Value) = "F" Then
+                    Call ac(tw.Cells(i, "G"), "Blank")
+                    tw.Cells(i, "G").Value = "MS"
+                Else
+                    tw.Cells(i, "G").Interior.Color = vbYellow
+                    tw.Cells(i, "H").Interior.Color = vbYellow
+                End If
+        Else
+            If rs(tw.Cells(i, "H").Value) = "M" Then
+                tw.Cells(i, "G").Interior.Color = vbYellow
+                tw.Cells(i, "H").Interior.Color = vbYellow
+            ElseIf rs(tw.Cells(i, "H").Value) = "" Then
+                Call ac(tw.Cells(i, "H"), "Blank")
+                tw.Cells(i, "H").Value = "F"
+            End If
+        End If
+    Else
+        tw.Cells(i, "G").Interior.Color = vbYellow
+        tw.Cells(i, "H").Interior.Color = vbYellow
+    End If
+End Sub
+Sub ac(ra As Range, s As String)
+    If ra.Comment Is Nothing Then
+        ra.AddComment s
+    Else
+        ra.Comment.Text (ra.Comment.Text & vbCrLf & s)
+    End If
+End Sub
+'new
+Function getsh(ta As Workbook) As String
+    Dim i As Integer
+    Dim tsh As String
+    'MsgBox ta Is Nothing
+    'MsgBox ta.Sheets.Count
+    For i = 1 To ta.Sheets.Count
+        If rs(ta.Sheets(i).Name) Like "*OTHOBUP" Then
+            tsh = ta.Sheets(i).Name
+        End If
+'        Debug.Print Replace(UCase(tar.Sheets(i).Name), " ", "") & vbCrLf
+'        Debug.Print i & tar.Sheets.Count & vbCrLf
+    Next
+    If tsh = "" Then
+        MsgBox "No sheet named with ""OTHOBUP"", please check"
+        ta.Close
+        'End
+        Exit Function
+    Else
+        getsh = tsh
+    End If
+End Function
+'new
+Function rs(s As String) As String
+    rs = Replace(Trim(UCase(s)), " ", "")
+End Function
+'new
+Function fc(s As String) As String
+    Dim fs As String
+    Dim cc As String
+    fs = Right(rs(s), 18)
+    co = ""
+    For i = 2 To getlb(ThisWorkbook.Sheets(2), "A") - 1
+        If InStrRev(fs, ThisWorkbook.Sheets(2).Cells(i, "B").Value) Then
+            cc = ThisWorkbook.Sheets(2).Cells(i, "A").Text
+            'MsgBox TypeName(ThisWorkbook.Sheets(2).Cells(i, "A").Value)
+            fc = cc
+            Exit For
+        End If
+    Next
+    If cc = "" Then
+        If InStrRev(Right(fs, 2), "HK") Then
+            cc = "HK"
+            fc = cc
+        ElseIf InStrRev(fs, "UNITEDKINGDOM") Then
+            cc = "GB"
+            fc = cc
+        ElseIf InStrRev(fs, "UNITEDSTATE") Then
+            cc = "US"
+            fc = cc
+        ElseIf InStrRev(fs, "ITISHVIRGINISLAND") Then
+            cc = "VG"
+            fc = cc
+        ElseIf InStrRev(Right(fs, 3), "BVI") Then
+            cc = "VG"
+            fc = cc
+        Else
+            fc = ""
+        End If
+    End If
+End Function
+'new
+Function fa(s As String) As String
+    Dim fs As String
+    Dim ac As String
+    fs = Right(rs(s), 60)
+    ac = ""
+    If fc(fs) = "HK" Then
+        For i = 2 To getlb(ThisWorkbook.Sheets(3), "A") - 1
+            If InStrRev(fs, ThisWorkbook.Sheets(3).Cells(i, "B")) Then
+                ac = ThisWorkbook.Sheets(3).Cells(i, "A").Value
+                fa = ac
+                Exit For
+            End If
+        Next
+        If ac = "" Then
+            ac = "09"
+            fa = ac
+        End If
+    Else
+        fa = ""
+    End If
+End Function
+'new
+Function sp2(ByVal os As String) As Variant
+    Dim ar(1)
+    Dim no As Integer
+    no = UBound(Split(os, ","))
+    If no <> 0 Then
+        For i = 0 To no
+            If i < Round((no + 1) / 2) Then
+                ar(0) = ar(0) & Split(os, ",")(i) & ","
+            Else
+                ar(1) = ar(1) & Split(os, ",")(i) & ","
+            End If
+        Next
+    Else
+        no = UBound(Split(os, " "))
+        For i = 0 To no
+            If i < Round((no + 1) / 2) Then
+                ar(0) = ar(0) & Split(os, " ")(i) & " "
+            Else
+                ar(1) = ar(1) & Split(os, " ")(i) & " "
+            End If
+        Next
+    End If
+    sp2 = ar
+End Function
+'new
+Function ad4(s As String) As String
+    Dim s1, s2, s3, s4 As String
+    Dim no As Integer
+    no = UBound(Split(s, ","))
+    'MsgBox no
+    If no <> 0 Then
+        If no > 3 Then
+            s1 = sp2(Left(sp2(s)(0), Len(sp2(s)(0)) - 1))(0)
+            s2 = sp2(Left(sp2(s)(0), Len(sp2(s)(0)) - 1))(1)
+            s3 = sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(0)
+            s4 = Left(sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(1), Len(sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(1)) - 1)
+        Else
+            If no = 1 Then
+                s1 = Split(s, ",")(0) & ","
+                s2 = Split(s, ",")(1)
+                s3 = s4 = ""
+            ElseIf no = 2 Then
+                s1 = Split(s, ",")(0) & ","
+                s2 = Split(s, ",")(1) & ","
+                s3 = Split(s, ",")(2)
+                s4 = ""
+            ElseIf no = 2 Then
+                s1 = Split(s, ",")(0) & ","
+                s2 = Split(s, ",")(1) & ","
+                s3 = Split(s, ",")(2) & ","
+                s4 = Split(s, ",")(3)
+            End If
+        End If
+    Else
+        no = UBound(Split(s, " "))
+        If no > 3 Then
+            s1 = sp2(Left(sp2(s)(0), Len(sp2(s)(0)) - 1))(0)
+            s2 = sp2(Left(sp2(s)(0), Len(sp2(s)(0)) - 1))(1)
+            s3 = sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(0)
+            s4 = Left(sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(1), Len(sp2(Left(sp2(s)(1), Len(sp2(s)(1)) - 1))(1)) - 1)
+        Else
+            If no = 1 Then
+                s1 = Split(s, " ")(0) & " "
+                s2 = Split(s, " ")(1)
+                s3 = s4 = ""
+            ElseIf no = 2 Then
+                s1 = Split(s, " ")(0) & " "
+                s2 = Split(s, " ")(1) & " "
+                s3 = Split(s, " ")(2)
+                s4 = ""
+            ElseIf no = 2 Then
+                s1 = Split(s, " ")(0) & " "
+                s2 = Split(s, " ")(1) & " "
+                s3 = Split(s, " ")(2) & " "
+                s4 = Split(s, " ")(3)
+            End If
+        End If
+    End If
+    ad4 = s1 & "||" & s2 & "||" & s3 & "||" & s4 & "||"
+End Function
+
+Sub ip(tw As Worksheet, s As String, dw As Worksheet)
+    Dim i As Integer
+    i = tw.Range("C:C").Find(s).Row
+    While tw.Cells(i, "C").Value = s
+        Select Case UCase(tw.Cells(i, "D").Value)
+            Case "ADD"
+                'MsgBox "add"
+                Call ad(tw, i, dw)
+            Case "AMEND"
+                'MsgBox "amend"
+                Call am(tw, i, dw)
+            Case "DEL"
+                'MsgBox "del"
+                Call d(tw, i, dw)
+            Case ""
+                'do nothing
+            Case Else
+                MsgBox "error" & tw.Cells(i, "D").Address
+        End Select
+        i = i + 1
+    Wend
+End Sub
+Sub st(ws As Worksheet)
+    Dim ls As Integer
+    ls = getlb(ws, "B")
+    With ws
+        .Range("B12:J" & ls).Sort _
+        Key1:=.Range("B12"), order1:=xlDescending, _
+        Key2:=.Range("C12"), order2:=xlDescending, Header:=xlYes
+    End With
+End Sub
+'ok, work
+Sub d(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "deletion"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - id"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - id"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value) 'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+Sub ad(tw As Worksheet, i As Integer, dw As Worksheet)
+    Call adi(tw, i, dw)
+    Call adn(tw, i, dw)
+    Call addob(tw, i, dw)
+    Call adfn(tw, i, dw)
+    Call adbp(tw, i, dw, "addition")
+    Call adpa(tw, i, dw)
+End Sub
+Sub am(tw As Worksheet, i As Integer, dw As Worksheet)
+    Call adbp(tw, i, dw, "alteration")
+End Sub
+'ok, work
+Sub adi(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - id"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - id"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "E").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)  'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Sub adn(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - na"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - na"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "K").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)   'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Sub addob(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - dob"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - dob"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "I").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)   'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Sub adfn(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "C").Value = "b - fn"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        dw.Cells(lb, "C").Value = "kk - fn"
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "H").Value) & " " & UCase(tw.Cells(i, "F").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)  'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Sub adbp(tw As Worksheet, i As Integer, dw As Worksheet, s As String)
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    If tw.Cells(i, "C").Value = "com3 bb" Then
+        dw.Cells(lb, "B").Value = s
+        dw.Cells(lb, "C").Value = "b - p"
+    ElseIf tw.Cells(i, "C").Value = "com12 kk" Then
+        Exit Sub
+    Else
+        dw.Cells(lb, "C").Value = ""
+    End If
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "L").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)  'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'not fully test, not ok
+Sub adpa(tw As Worksheet, i As Integer, dw As Worksheet)
+    Dim rng As Range
+    Dim add As String
+    Set rng = dw.Range("C:C").Find("pa")
+    If Not rng Is Nothing Then
+        add = rng.Address
+    Else
+        add = ""
+    End If
+    Do While Not rng Is Nothing
+        If UCase(dw.Cells(rng.Row, "F").Value) = UCase(tw.Cells(i, "F").Value) Then
+            Exit Sub
+        Else
+            Set rng = dw.Range("C:C").FindNext(rng)
+            If rng.Address = add Then
+                Exit Do
+            End If
+        End If
+    Loop
+    Dim lb As Integer
+    lb = getlb(dw, "B")
+    dw.Cells(lb, "B").Value = "addition"
+    dw.Cells(lb, "C").Value = "pa"
+    dw.Cells(lb, "D").Value = "'" 'Org value
+    dw.Cells(lb, "E").Value = UCase("'" & tw.Cells(i, "J").Value)  'New value
+    dw.Cells(lb, "F").Value = UCase("'" & tw.Cells(i, "F").Value)  'CP
+    dw.Cells(lb, "G").Value = UCase("'" & tw.Cells(i, "E").Value) 'CPNO
+    dw.Cells(lb, "H").Value = "CC"
+    dw.Cells(lb, "J").Value = tw.Cells(i, "I").Value
+End Sub
+'ok, work
+Function getlb(w As Worksheet, r As String) As Integer
+    getlb = w.Cells(w.Rows.Count, r).End(3).Row + 1
+End Function
+Sub t()
+    'MsgBox ThisWorkbook.Sheets(1).Rows.Count
+    'MsgBox ThisWorkbook.Sheets(1).Range("A" & Rows.Count).End(3).Row
+'    Dim s As String
+'    s = "sasdfgsdfg,vsdfgdfg"
+'    MsgBox UBound(Split(s, " "))
+    'MsgBox sp2("G1-2, Sunlight Tower, 248 Queen's Road East, Wan Chai, Hong Kong")(0) & "||" & sp2("G1-2, Sunlight Tower, 248 Queen's Road East, Wan Chai, Hong Kong")(1)
+    'ThisWorkbook.Sheets(1).Cells(16, 1).Interior.Color = vbYellow
+'    ThisWorkbook.Sheets(1).Cells(16, 1).ClearComments
+'    ThisWorkbook.Sheets(1).Cells(16, 1).AddComment (ThisWorkbook.Sheets(1).Cells(16, 1).Value)
+    If ThisWorkbook.Sheets(1).Cells(16, 1).Comment Is Nothing Then
+        ThisWorkbook.Sheets(1).Cells(16, 1).AddComment (ThisWorkbook.Sheets(1).Cells(16, 1).Value)
+    Else
+        ThisWorkbook.Sheets(1).Cells(16, 1).Comment.Text (ThisWorkbook.Sheets(1).Cells(16, 1).Comment.Text & vbCrLf & ThisWorkbook.Sheets(1).Cells(16, 1).Value)
+    End If
+End Sub
+
