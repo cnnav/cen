@@ -1,3 +1,27 @@
+Sub t()
+    MsgBox Format(regtest("200 Gathering of wild growing non-wood products"), "00000")
+End Sub
+
+Function regtest(s As String) As String
+    Dim reg As Object
+    Set reg = CreateObject("vbscript.regexp")
+    Dim m, mc
+    With reg
+        .Global = True
+        .Pattern = "\d+"
+        Set mc = .Execute(s)
+    End With
+    If mc.Count <> 1 Then
+        regtest = ""
+    Else
+        regtest = mc.Item(0)
+    End If
+'        For Each m In mc
+'            MsgBox m.Value
+'        Next
+
+End Function
+
 Sub abc()
     Dim sFile As String
     Dim sName
