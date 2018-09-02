@@ -1,0 +1,119 @@
+Public ind As Integer
+Dim hwnd As Long
+Option Explicit
+Private Declare PtrSafe Function IsIconic Lib "user32 " (ByVal hwnd As Long) As Long
+Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+'Private Declare PtrSafe Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Const GWL_STYLE = (-16)
+Private Const WS_THICKFRAME As Long = &H40000    '(恢复大小)
+Private Const WS_MINIMIZEBOX As Long = &H20000    '(最小化)
+'Private Const WM_SHOWWINDOW As Long = &H18
+'Private Const WS_MAXIMIZEBOX As Long = &H10000    '(最大化)
+
+Private Sub CommandButton1_Click()
+    Call gettask
+End Sub
+
+
+Private Sub CommandButton2_Click()
+    If IsError(ListBox1.Value = "m") Then
+        ListBox1.Value = "m"
+    Else
+        MsgBox "a"
+    End If
+End Sub
+
+Public Sub CommandButton3_Click()
+    UserForm1.Show
+    'SendMessage hwnd, WM_SHOWWINDOW, 0, 0
+    
+End Sub
+
+Sub ret()
+
+    ListBox1.Selected(ind) = True
+    ListBox1.ListIndex = ind
+
+
+End Sub
+Private Sub ListBox1_Change()
+    If TextBox1.Text <> "" Then
+        Call ret
+    Else
+    
+    
+        ind = ListBox1.ListIndex
+    
+    End If
+    
+'    If TextBox1.Text <> "" And TextBox2.Text <> "" Then
+'
+'    ElseIf TextBox1.Text = "" Then
+'        'Debug.Print ListBox1.Selected
+'        TextBox1.Text = Now
+'        Debug.Print ListBox1.ListIndex
+'
+'    ElseIf TextBox2.Text = "" Then
+'        'Debug.Print ListBox1
+'        TextBox2.Text = Now
+'        Debug.Print ListBox1.ListIndex
+'    End If
+End Sub
+
+Private Sub UserForm_Initialize()
+'    For i = 0 To 99
+'
+'    Next
+    Call gettask
+    Call filli
+    
+    Dim IStyle As Long
+    hwnd = FindWindow("ThunderDFrame", Me.Caption)
+    IStyle = GetWindowLong(hwnd, GWL_STYLE)
+    IStyle = IStyle Or WS_THICKFRAME    '还原
+    IStyle = IStyle Or WS_MINIMIZEBOX    '最小化
+    'IStyle = IStyle Or WS_MAXIMIZEBOX    '最大化
+    SetWindowLong hwnd, GWL_STYLE, IStyle
+    
+End Sub
+Sub filli()
+    ComboBox1.AddItem "SC/H"
+    ComboBox1.AddItem "M"
+    ComboBox1.AddItem "L"
+    ComboBox1.ListIndex = 0
+    ComboBox2.AddItem "1ST"
+    ComboBox2.AddItem "2ND"
+    ComboBox2.ListIndex = 0
+
+End Sub
+Sub gettask()
+    ListBox1.Clear
+    'ListBox1.Selected = False
+    Dim i As Integer
+    For i = 2 To ThisWorkbook.Sheets(1).Cells(ThisWorkbook.Sheets(1).Rows.Count, "K").End(3).Row + 1
+        If ThisWorkbook.Sheets(1).Cells(i, "k") <> "" Then
+            ListBox1.AddItem ThisWorkbook.Sheets(1).Cells(i, "k")
+        End If
+    Next
+End Sub
+
+Sub upsta()
+    ThisWorkbook.Sheets(1).Cells(Cells(Rows.Count, "b").End(3).Row + 1, "e") = TextBox1.Text
+End Sub
+
+Sub upsto()
+    ThisWorkbook.Sheets(1).Cells(Cells(Rows.Count, "c").End(3).Row + 1, "e") = TextBox2.Text
+End Sub
+
+Private Sub UserForm_Resize()
+    'If IsIconic(hwnd) <> 0 Then
+        'MsgBox "min"
+        'UserForm1.Hide
+    'Else
+        'UserForm1.Show
+        
+        'UserForm1.Show
+    'End If
+End Sub
